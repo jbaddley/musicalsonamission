@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { Container } from "semantic-ui-react";
+import _ from "lodash";
 
 export default function Progress() {
   const router = useRouter();
@@ -7,7 +8,7 @@ export default function Progress() {
 
   return (
     <Container>
-      <h2>{prod}</h2>
+      <h2>{_.startCase(String(prod))}</h2>
     </Container>
   );
 }
