@@ -1,6 +1,6 @@
 import { Production } from "@prisma/client";
 import _ from "lodash";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Form } from "semantic-ui-react";
 import { ProductionsClientAPI } from "../../data";
 
@@ -36,7 +36,7 @@ export default function EditProduction({ production, onSaved }: EditProductionPr
     <Form onSubmit={handleSave}>
       <Form.Input label='Title' name='title' value={state?.title} onBlur={handleChangeTitle} onChange={handleChange} />
       <Form.Input label='Description' name='description' value={state?.description} onChange={handleChange} />
-      <Form.Input label='Length' name='length' type='number' value={state?.length} onChange={handleChange} />
+      <Form.Input label='Length (minutes)' name='length' type='number' value={state?.length} onChange={handleChange} />
       <Form.Input label='Budget' name='budget' type='number' value={state?.budget} onChange={handleChange} />
       <Form.Input label='Slug' name='slug' value={state?.slug} onChange={handleChange} />
       <Button type='submit' primary>

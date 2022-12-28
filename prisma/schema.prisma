@@ -186,8 +186,7 @@ model Production {
   description      String
   status           Status?                    @default(IN_WRITING)
   contributors     Contribution[]
-  social           Social?                    @relation(fields: [socialId], references: [id])
-  socialId         Int?
+  social           Social[]
   tags             ProductionTag[]
   scenes           Scene[]
   characters       Character[]
