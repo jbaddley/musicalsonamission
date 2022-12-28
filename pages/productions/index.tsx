@@ -34,9 +34,9 @@ export default function Productions({ initialProductions }: ProductionsProps) {
 }
 
 export async function getStaticProps() {
-  const productions = await ProductionsServerAPI.getList();
+  const initialProductions = await ProductionsServerAPI.getList();
 
   return {
-    props: { productions },
+    props: { initialProductions },
   };
 }
