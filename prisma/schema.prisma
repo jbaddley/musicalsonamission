@@ -1,0 +1,518 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum Status {
+  IN_WRITING
+  COLLAB_NEEDED
+  AUDITIONS
+  STAFFING
+  BACKING_TRACKS
+  FINANCING
+  IN_PRODUCTION
+  RUN_ENDED
+  ON_HOLD
+  CANCELLED
+}
+
+enum Type {
+  MUSICAL
+  SUNG_THROUGH
+  PLAY
+}
+
+enum ContributorType {
+  LYRICIST
+  BOOK
+  SONGWRITER
+  PRODUCER
+  STORY
+  ARRAINGER
+  FINANCIAL
+  ART
+}
+
+enum ContribitutionLevel {
+  MAIN
+  SUB
+  CO
+  PARTIAL
+}
+
+enum CharacterType {
+  MAIN
+  MINOR
+  ENSEMBLE
+}
+
+enum PerformanceType {
+  BACKING_TRACK
+  CAST_ALBUM
+  STAGE
+}
+
+enum ProductionNeedType {
+  LOGO
+  ILLUSTRATION
+  VOCALIST
+  ACTOR
+  LYRICIST
+  COMPOSER
+  ARRAINGER
+  PRODUCER
+  LIBRETTIST
+  VIDEOGRAPHER
+  MUSICIAN
+}
+
+enum MediaType {
+  AUDIO
+  VIDEO
+  ART
+  IMAGE
+}
+
+enum Roles {
+  ADMIN
+  CREATOR
+  SPONSOR
+  CHARITY
+  PERFORMER
+}
+
+enum StaffRole {
+  DIRECTOR
+  ASSISTANT_DIRECTOR
+  MUSIC_DIRECTOR
+  CHOREOGRAPHER
+  ASSOCIATE_CHOREOGRAPHER
+  PLAYWRIGHT
+  COMPOSER
+  TECHNICAL_DIRECTOR
+  STAGE_HAND
+  MENTOR
+  SOUND
+  LIGHTING
+  STAGE_DESIGN
+  COSTUME_DESIGNER
+  COSTUME_MAKER
+}
+
+model Contribution {
+  id                 Int                 @id @default(autoincrement())
+  user               User                @relation(fields: [userId], references: [id])
+  userId             Int
+  production         Production?         @relation(fields: [productionId], references: [id])
+  productionId       Int?
+  contributedAs      ContributorType
+  contributionLevel  ContribitutionLevel
+  contributionAmount Int?
+}
+
+model SongContribution {
+  id                Int                 @id @default(autoincrement())
+  user              User                @relation(fields: [userId], references: [id])
+  userId            Int
+  contributedAs     ContributorType
+  contributionLevel ContribitutionLevel
+  song              Song?               @relation(fields: [songId], references: [id])
+  songId            Int?
+}
+
+model SocialPlatforms {
+  id      Int      @id @default(autoincrement())
+  name    String
+  baseUrl String
+  logoUrl String
+  icon    String
+  Social  Social[]
+}
+
+model Social {
+  id                Int             @id @default(autoincrement())
+  url               String
+  production        Production[]
+  socialPlatform    SocialPlatforms @relation(fields: [socialPlatformsId], references: [id])
+  socialPlatformsId Int
+  connected         Boolean
+  charity           Charity?        @relation(fields: [charityId], references: [id])
+  charityId         Int?
+  Sponsor           Sponsor?        @relation(fields: [sponsorId], references: [id])
+  sponsorId         Int?
+}
+
+model ProductionTag {
+  id          Int          @id @default(autoincrement())
+  name        String
+  productions Production[]
+}
+
+model Character {
+  id                    Int           @id @default(autoincrement())
+  firstName             String
+  lastName              String
+  middleName            String?
+  type                  CharacterType
+  hasLines              Boolean
+  hasSolo               Boolean
+  bio                   String
+  personaImageUrl       String
+  scenes                Scene[]
+  performer             Performance[]
+  production            Production?   @relation(fields: [productionId], references: [id])
+  productionId          Int?
+  cast                  Cast?         @relation(fields: [castUserId, castStageProductionId], references: [userId, stageProductionId])
+  castUserId            Int?
+  castStageProductionId Int?
+}
+
+model Production {
+  id               Int                        @id @default(autoincrement())
+  createdAt        DateTime                   @default(now()) @db.Timestamp(6)
+  title            String
+  type             Type                       @default(MUSICAL)
+  slug             String?
+  acts             Int?                       @default(2)
+  length           Int?
+  description      String
+  status           Status?                    @default(IN_WRITING)
+  contributors     Contribution[]
+  social           Social?                    @relation(fields: [socialId], references: [id])
+  socialId         Int?
+  tags             ProductionTag[]
+  scenes           Scene[]
+  characters       Character[]
+  stageProductions StageProduction[]
+  budget           Int
+  charitiesHelped  CharityProductionsHelped[]
+  sponsoredBy      ProductionSponsored[]
+  productionNeeds  ProductionNeeds[]
+  affiliates       Affiliate[]
+}
+
+model CharityProductionsHelped {
+  production     Production @relation(fields: [productionId], references: [id])
+  charity        Charity    @relation(fields: [charityId], references: [id])
+  percent        Int
+  totalAmount    Int
+  checkDelivered DateTime
+
+  productionId Int
+  charityId    Int
+
+  @@id([productionId, charityId])
+}
+
+model ProductionSponsored {
+  production   Production @relation(fields: [productionId], references: [id])
+  sponsor      Sponsor    @relation(fields: [sponsorId], references: [id])
+  totalAmount  Int
+  paid         DateTime
+  productionId Int
+  sponsorId    Int
+
+  @@id([productionId, sponsorId])
+}
+
+model Address {
+  id                   Int                    @id @default(autoincrement())
+  street               String
+  unit                 String
+  city                 String
+  state                String
+  postalCode           String
+  performanceAddresses PerformanceAddresses[]
+  rehearsalAddresses   RehearsalAddresses[]
+  charities            Charity[]
+  sponsors             Sponsor[]
+  theaters             Theater[]
+}
+
+model PerformanceAddresses {
+  address           Address         @relation(fields: [addressId], references: [id])
+  performance       StageProduction @relation(fields: [stageProductionId], references: [id])
+  addressId         Int
+  stageProductionId Int
+  dates             DateTime[]
+
+  @@id([addressId, stageProductionId])
+}
+
+model RehearsalAddresses {
+  address           Address         @relation(fields: [addressId], references: [id])
+  performance       StageProduction @relation(fields: [stageProductionId], references: [id])
+  addressId         Int
+  stageProductionId Int
+  dates             DateTime[]
+
+  @@id([addressId, stageProductionId])
+}
+
+model Staff {
+  user              User            @relation(fields: [userId], references: [id])
+  stageProduction   StageProduction @relation(fields: [stageProductionId], references: [id])
+  roles             StaffRole
+  userId            Int
+  stageProductionId Int
+
+  @@id([userId, stageProductionId])
+}
+
+model Cast {
+  user              User            @relation(fields: [userId], references: [id])
+  stageProduction   StageProduction @relation(fields: [stageProductionId], references: [id])
+  roles             Character[]
+  userId            Int
+  stageProductionId Int
+  group             Int
+  media             Media[]
+
+  @@id([userId, stageProductionId])
+}
+
+model StageProduction {
+  id                   Int                    @id @default(autoincrement())
+  production           Production             @relation(fields: [productionId], references: [id])
+  productionId         Int
+  startDate            DateTime
+  auditionTimes        DateTime[]
+  rehearsalTimes       DateTime[]
+  showTimes            DateTime[]
+  castParty            DateTime
+  timezone             String
+  performanceAddresses PerformanceAddresses[]
+  rehearsalAddresseses RehearsalAddresses[]
+  stage                Stage                  @relation(fields: [stageId], references: [id])
+  media                Media[]
+  auditions            Audition[]
+  staff                Staff[]
+  cast                 Cast[]
+  reviews              Reviews[]
+  stageId              Int
+}
+
+model Media {
+  id                    Int                @id @default(autoincrement())
+  date                  DateTime
+  url                   String
+  description           String
+  title                 String
+  stageProduction       StageProduction    @relation(fields: [stageProductionId], references: [id])
+  stageProductionId     Int
+  type                  MediaType
+  performances          PerformerInMedia[]
+  audition              Audition?          @relation(fields: [auditionId], references: [id])
+  auditionId            Int?
+  cast                  Cast?              @relation(fields: [castUserId, castStageProductionId], references: [userId, stageProductionId])
+  castUserId            Int?
+  castStageProductionId Int?
+  productionNeeds       ProductionNeeds?   @relation(fields: [productionNeedsId], references: [id])
+  productionNeedsId     Int?
+}
+
+model PerformerInMedia {
+  media       Media       @relation(fields: [mediaId], references: [id])
+  performance Performance @relation(fields: [performanceId], references: [id])
+
+  mediaId       Int
+  performanceId Int
+  coords        Json?
+
+  @@id([mediaId, performanceId])
+}
+
+model Performance {
+  id              Int                @id @default(autoincrement())
+  user            User               @relation(fields: [userId], references: [id])
+  userId          Int
+  character       Character          @relation(fields: [characterId], references: [id])
+  characterId     Int
+  scenes          Scene[]
+  performanceType PerformanceType
+  media           PerformerInMedia[]
+}
+
+model Song {
+  id           Int                @id @default(autoincrement())
+  title        String
+  lyrics       String
+  lyricsUrl    String
+  backingUrl   String
+  scratchUrl   String
+  rehearsalUrl String
+  scene        Scene?             @relation(fields: [sceneId], references: [id])
+  sceneId      Int?
+  contributors SongContribution[]
+}
+
+model Scene {
+  id            Int          @id @default(autoincrement())
+  title         String?
+  synopsis      String
+  act           Int          @default(1)
+  text          String
+  url           String
+  audioUrl      String
+  songs         Song[]
+  production    Production?  @relation(fields: [productionId], references: [id])
+  productionId  Int?
+  character     Character?   @relation(fields: [characterId], references: [id])
+  characterId   Int?
+  performance   Performance? @relation(fields: [performanceId], references: [id])
+  performanceId Int?
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String
+  posts Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  tags      Tag[]
+}
+
+model Profile {
+  id           Int     @id @default(autoincrement())
+  bio          String?
+  avatarBase64 String?
+  avatarUrl    String?
+  user         User    @relation(fields: [userId], references: [id])
+  userId       Int     @unique
+}
+
+model User {
+  id                Int                @id @default(autoincrement())
+  email             String             @unique @db.VarChar(255)
+  firstName         String?            @db.VarChar(255)
+  lastName          String?            @db.VarChar(255)
+  middleName        String?            @db.VarChar(255)
+  posts             Post[]
+  profile           Profile?
+  contributions     Contribution[]
+  songContributions SongContribution[]
+  performances      Performance[]
+  charities         Charity[]
+  sponsors          Sponsor[]
+  roles             Roles[]
+  auditions         Audition[]
+  staff             Staff[]
+  casts             Cast[]
+  requests          Requests[]
+  reviews           Reviews[]
+  productionNeeds   ProductionNeeds[]
+  Affiliate         Affiliate[]
+}
+
+model Charity {
+  id          Int                        @id @default(autoincrement())
+  name        String
+  charityId   String
+  productions CharityProductionsHelped[]
+  website     String
+  socialMedia Social[]
+  phone       String
+  address     Address                    @relation(fields: [addressId], references: [id])
+  addressId   Int
+  email       String
+  contact     User                       @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model Sponsor {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  website             String
+  phone               String
+  socialMedia         Social[]
+  address             Address               @relation(fields: [addressId], references: [id])
+  addressId           Int
+  productionSponsored ProductionSponsored[]
+  contact             User                  @relation(fields: [userId], references: [id])
+  userId              Int
+  email               String
+}
+
+model Audition {
+  id                Int             @id @default(autoincrement())
+  user              User            @relation(fields: [userId], references: [id])
+  stageProduction   StageProduction @relation(fields: [stageProductionId], references: [id])
+  userId            Int
+  stageProductionId Int
+  media             Media[]
+}
+
+model Reviews {
+  id                Int             @id @default(autoincrement())
+  user              User            @relation(fields: [userId], references: [id])
+  userId            Int
+  rating            Float
+  title             String
+  review            String
+  permission        Boolean
+  stageProduction   StageProduction @relation(fields: [stageProductionId], references: [id])
+  stageProductionId Int
+}
+
+model Requests {
+  id          Int    @id @default(autoincrement())
+  user        User   @relation(fields: [userId], references: [id])
+  userId      Int
+  title       String
+  description String
+}
+
+model ProductionNeeds {
+  id           Int                @id @default(autoincrement())
+  production   Production         @relation(fields: [productionId], references: [id])
+  productionId Int
+  title        String
+  description  String
+  media        Media[]
+  fulfilledBy  User?              @relation(fields: [userId], references: [id])
+  userId       Int
+  type         ProductionNeedType
+}
+
+model Affiliate {
+  id           Int        @id @default(autoincrement())
+  linkId       String
+  user         User       @relation(fields: [userId], references: [id])
+  production   Production @relation(fields: [productionId], references: [id])
+  userId       Int
+  productionId Int
+}
+
+model Stage {
+  id              Int               @id @default(autoincrement())
+  name            String
+  capacity        Int
+  theater         Theater?          @relation(fields: [theaterId], references: [id])
+  theaterId       Int?
+  costPerDay      Float
+  StageProduction StageProduction[]
+}
+
+model Theater {
+  id        Int     @id @default(autoincrement())
+  name      String
+  address   Address @relation(fields: [addressId], references: [id])
+  stages    Stage[]
+  addressId Int
+}
