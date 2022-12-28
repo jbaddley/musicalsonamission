@@ -12,14 +12,16 @@ import { ProductionsClientAPI, ProductionsServerAPI } from "../../../data";
 export default function EditProductionView({ initialProduction }: { initialProduction: Production }) {
   const router = useRouter();
   const { slug } = router.query;
-  const { data: production = initialProduction, refetch } = useQuery(["production", slug], () =>
-    ProductionsClientAPI.getBySlug(String(slug))
-  );
-  const [state, setState] = useState<Partial<Production> | undefined>();
+  const { data, refetch } = useQuery(["production", slug], () => ProductionsClientAPI.getBySlug(String(slug)));
+  const [state, setState] = useState<Production | undefined>(initialProduction);
 
   useEffect(() => {
-    setState({ ...production, ...state });
-  }, [production, setState]);
+    setState({ ...initialProduction, ...state });
+  }, [initialProduction, setState]);
+
+  useEffect(() => {
+    setState({ ...data, ...state });
+  }, [data, setState]);
 
   const handleSave = (saved: Production) => {
     setState(saved);
@@ -30,7 +32,7 @@ export default function EditProductionView({ initialProduction }: { initialProdu
   return (
     <Layout>
       <Link href='/productions'>Back to Productions</Link>
-      <EditProduction production={production} onSaved={handleSave} />
+      <EditProduction production={state} onSaved={handleSave} />
     </Layout>
   );
 }
