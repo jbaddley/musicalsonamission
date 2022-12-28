@@ -15,7 +15,7 @@ export default function ProductionView({ initialProduction }: { initialProductio
   return (
     <Layout>
       <Link href='/productions'>Back to Productions</Link>
-      <pre>{JSON.stringify(production)}</pre>
+      <pre>{JSON.stringify(production, null, 2)}</pre>
     </Layout>
   );
 }
