@@ -19,7 +19,7 @@ export default function EditProductionView({ initialProduction }: { initialProdu
 
   useEffect(() => {
     setState({ ...production, ...state });
-  }, [production]);
+  }, [production, setState]);
 
   const handleSave = (saved: Production) => {
     setState(saved);

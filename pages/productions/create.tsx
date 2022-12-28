@@ -1,7 +1,7 @@
 import _ from "lodash";
 import Link from "next/link";
+import EditProduction from "../../components/EditProduction";
 import { Layout } from "../../components/Layout";
-import EditProduction from "./[slug]/edit";
 
 export default function CreateProduction() {
   return (
