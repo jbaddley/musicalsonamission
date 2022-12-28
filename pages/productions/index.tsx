@@ -26,7 +26,7 @@ export default function Productions({ initialProductions }: ProductionsProps) {
       <h3>Productions</h3>
       <ul>
         {productions?.map((prod) => (
-          <ProductionCard production={prod} />
+          <ProductionCard key={prod.id} production={prod} onDelete={refetch} />
         ))}
       </ul>
     </Layout>

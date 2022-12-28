@@ -1,7 +1,7 @@
 import { Production } from "@prisma/client";
 import _ from "lodash";
 import { useCallback, useEffect, useState } from "react";
-import { Button, Form } from "semantic-ui-react";
+import { Button, Form, Icon, Input, TextArea } from "semantic-ui-react";
 import { ProductionsClientAPI } from "../../data";
 
 interface EditProductionProps {
@@ -20,6 +20,10 @@ export default function EditProduction({ production, onSaved }: EditProductionPr
     setState({ ...state, slug: state?.slug || production?.slug || _.kebabCase(String(value)) });
   };
 
+  const handleResetSlug = useCallback(() => {
+    setState({ ...state, slug: _.kebabCase(String(state?.title || production?.title)) });
+  }, [state, production]);
+
   const handleChange = (e: any, { name, value, type }: any) => {
     setState({ ...state, [name]: type === "number" ? +value : value });
   };
@@ -35,10 +39,22 @@ export default function EditProduction({ production, onSaved }: EditProductionPr
   return (
     <Form onSubmit={handleSave}>
       <Form.Input label='Title' name='title' value={state?.title} onBlur={handleChangeTitle} onChange={handleChange} />
-      <Form.Input label='Description' name='description' value={state?.description} onChange={handleChange} />
+      <Form.Field>
+        <label>Description</label>
+        <TextArea name='description' value={state?.description} onChange={handleChange} />
+      </Form.Field>
       <Form.Input label='Length (minutes)' name='length' type='number' value={state?.length} onChange={handleChange} />
       <Form.Input label='Budget' name='budget' type='number' value={state?.budget} onChange={handleChange} />
-      <Form.Input label='Slug' name='slug' value={state?.slug} onChange={handleChange} />
+      <Form.Field>
+        <label>Slug</label>
+        <Input
+          labelPosition='left corner'
+          label={<Icon name='refresh' onClick={handleResetSlug} />}
+          name='slug'
+          value={state?.slug}
+          onChange={handleChange}
+        />
+      </Form.Field>
       <Button type='submit' primary>
         Save
       </Button>
