@@ -37,16 +37,23 @@ export default function EditProductionView({ initialProduction }: { initialProdu
   );
 }
 
-export async function getStaticPaths() {
-  const productions = await ProductionsServerAPI.getList();
-  return {
-    paths: productions.map(({ slug }) => ({ params: { slug } })),
-    fallback: false, // can also be true or 'blocking'
-  };
-}
+// export async function getStaticPaths() {
+//   const productions = await ProductionsServerAPI.getList();
+//   return {
+//     paths: productions.map(({ slug }) => ({ params: { slug } })),
+//     fallback: false, // can also be true or 'blocking'
+//   };
+// }
 
-export async function getStaticProps({ params }: any) {
-  const initalProduction = await ProductionsServerAPI.getBySlug(params.slug);
+// export async function getStaticProps({ params }: any) {
+//   const initalProduction = await ProductionsServerAPI.getBySlug(params.slug);
+
+//   return {
+//     props: { initalProduction },
+//   };
+// }
+export async function getServerSideProps(context: any) {
+  const initalProduction = await ProductionsServerAPI.getBySlug(context.params.slug);
 
   return {
     props: { initalProduction },
