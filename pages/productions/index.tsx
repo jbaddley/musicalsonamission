@@ -15,11 +15,14 @@ interface ProductionsProps {
 }
 
 export default function Productions({ initialProductions }: ProductionsProps) {
-  const {
-    data: productions = initialProductions,
-    isLoading,
-    refetch,
-  } = useQuery(["productions"], ProductionsClientAPI.getList);
+  const { data, isLoading, refetch } = useQuery(["productions"], ProductionsClientAPI.getList);
+
+  const productions = useMemo(() => {
+    if (isLoading) {
+      return initialProductions || [];
+    }
+    return data;
+  }, [initialProductions, data, isLoading]);
 
   return (
     <Layout>
