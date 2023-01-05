@@ -106,7 +106,7 @@ export function ImageEditor({ src, editedSrc, onSave, designState, open }: Image
 
   return (
     <div>
-      {editedSrc && <img style={{ maxWidth: 250, maxHeight: 250 }} src={editedSrc} onClick={openImgEditor} />}
+      {editedSrc && <img style={{ maxWidth: 250, maxHeight: 250 }} alt='' src={editedSrc} onClick={openImgEditor} />}
       <Modal open={show} onClose={() => setShow(false)}>
         <Modal.Header>Edit Image</Modal.Header>
         <Modal.Content className={styles.content}>
