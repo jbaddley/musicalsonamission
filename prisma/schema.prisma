@@ -107,6 +107,11 @@ enum StaffRole {
   COSTUME_MAKER
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 model Contribution {
   id                 Int                 @id @default(autoincrement())
   user               User                @relation(fields: [userId], references: [id])
@@ -196,6 +201,8 @@ model Production {
   sponsoredBy      ProductionSponsored[]
   productionNeeds  ProductionNeeds[]
   affiliates       Affiliate[]
+  company          Company?                   @relation(fields: [companyId], references: [id])
+  companyId        Int?
 }
 
 model CharityProductionsHelped {
@@ -297,6 +304,8 @@ model StageProduction {
   cast                 Cast[]
   reviews              Reviews[]
   stageId              Int
+  company              Company?               @relation(fields: [companyId], references: [id])
+  companyId            Int?
 }
 
 model Media {
@@ -316,6 +325,8 @@ model Media {
   castStageProductionId Int?
   productionNeeds       ProductionNeeds?   @relation(fields: [productionNeedsId], references: [id])
   productionNeedsId     Int?
+  company               Company?           @relation(fields: [companyId], references: [id])
+  companyId             Int?
 }
 
 model PerformerInMedia {
@@ -388,12 +399,25 @@ model Post {
 }
 
 model Profile {
-  id           Int     @id @default(autoincrement())
-  bio          String?
-  avatarBase64 String?
-  avatarUrl    String?
-  user         User    @relation(fields: [userId], references: [id])
-  userId       Int     @unique
+  id                Int     @id @default(autoincrement())
+  bio               String?
+  avatarBase64      String?
+  avatarUrl         String?
+  avatarOriginalUrl String?
+  avatarDesignState Json?
+  avatarScale       Int     @default(1)
+  avatarBorder      Int     @default(50)
+  user              User    @relation(fields: [userId], references: [id])
+  userId            Int     @unique
+}
+
+model AuthAttempt {
+  id       Int      @id @default(autoincrement())
+  dateTime DateTime
+  status   String
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  payload  Json
 }
 
 model User {
@@ -402,6 +426,9 @@ model User {
   firstName         String?            @db.VarChar(255)
   lastName          String?            @db.VarChar(255)
   middleName        String?            @db.VarChar(255)
+  authId            String?
+  gender            Gender?
+  dateOfBirth       String?
   posts             Post[]
   profile           Profile?
   contributions     Contribution[]
@@ -416,7 +443,9 @@ model User {
   requests          Requests[]
   reviews           Reviews[]
   productionNeeds   ProductionNeeds[]
-  Affiliate         Affiliate[]
+  affiliate         Affiliate[]
+  companies         CompanyUsers[]
+  authAttempts      AuthAttempt[]
 }
 
 model Charity {
@@ -499,13 +528,13 @@ model Affiliate {
 }
 
 model Stage {
-  id              Int               @id @default(autoincrement())
-  name            String
-  capacity        Int
-  theater         Theater?          @relation(fields: [theaterId], references: [id])
-  theaterId       Int?
-  costPerDay      Float
-  StageProduction StageProduction[]
+  id               Int               @id @default(autoincrement())
+  name             String
+  capacity         Int
+  theater          Theater?          @relation(fields: [theaterId], references: [id])
+  theaterId        Int?
+  costPerDay       Float
+  stageProductions StageProduction[]
 }
 
 model Theater {
@@ -514,4 +543,27 @@ model Theater {
   address   Address @relation(fields: [addressId], references: [id])
   stages    Stage[]
   addressId Int
+}
+
+model CompanyUsers {
+  company     Company   @relation(fields: [companyId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  companyId   Int
+  userId      Int
+  memberStart DateTime
+  memberEnd   DateTime?
+  role        String
+
+  @@id([companyId, userId])
+}
+
+model Company {
+  id               Int               @id @default(autoincrement())
+  name             String
+  slug             String
+  media            Media[]
+  email            String
+  members          CompanyUsers[]
+  productions      Production[]
+  stageProductions StageProduction[]
 }

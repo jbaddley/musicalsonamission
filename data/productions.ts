@@ -4,7 +4,7 @@ export class ProductionsServerAPI {
   static async getList() {
     const prisma = new PrismaClient();
     const productions = await prisma.production.findMany();
-    return productions.sort((a, b) => (a.title < b.title ? -1 : 1));
+    return productions?.sort((a, b) => (a.title < b.title ? -1 : 1));
   }
 
   static async get(productionId: number) {

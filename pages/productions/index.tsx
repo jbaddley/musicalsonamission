@@ -1,11 +1,7 @@
-import { faL } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Production } from "@prisma/client";
 import _ from "lodash";
-import Link from "next/link";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "react-query";
-import { Button, Form, Icon, Modal } from "semantic-ui-react";
 import { Layout } from "../../components/Layout";
 import { ProductionCard } from "../../components/ProductionCard";
 import { ProductionsServerAPI, ProductionsClientAPI } from "../../data";

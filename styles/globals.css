@@ -1,3 +1,59 @@
 
 @import url(https://fonts.googleapis.com/css?family=Hanken+Grotesk);
 @import url(semantic-ui-css/semantic.min.css);
+
+:root {
+  --header-height: 54px;
+  --footer-height: 56px;
+}
+
+form[disabled] {
+  opacity: .4;
+  pointer-events: none;
+}
+
+form button[type='submit'] {
+  text-align: right;
+}
+
+body {
+  position: relative;
+}
+
+#__next {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#__next header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+}
+
+#__next .content {
+  position: absolute;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  bottom: var(--footer-height);
+  overflow: auto;
+  padding: 32px;
+  background-color: bisque;
+}
+
+#__next footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-height);
+  padding: 16px;
+  background-color: rgba(0,0,0,.05);
+  color: #777;
+}

@@ -1,0 +1,16 @@
+.content {
+  display: flex !important;
+  width: 100% !important;
+}
+
+.content .editor {
+  flex-grow: 1;
+}
+
+.content .preview {
+  flex-grow: 1;
+}
+
+.content .slider {
+  width: 250px;
+}
