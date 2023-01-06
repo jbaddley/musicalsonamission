@@ -45,7 +45,6 @@ export function ImageEditor({ src, editedSrc, onSave, designState, open }: Image
 
   const updatePreview = useCallback(
     (e: any) => {
-      console.log("e", e);
       if (e) {
         setPosition(e);
       }
@@ -85,8 +84,12 @@ export function ImageEditor({ src, editedSrc, onSave, designState, open }: Image
         );
       }
     },
-    [avatarRef.current, canvasRef.current]
+    [avatarRef.current, canvasRef.current, scale]
   );
+
+  useEffect(() => {
+    updatePreview(position);
+  }, [scale]);
 
   const handleSave = useCallback(() => {
     if (canvasRef.current) {
@@ -100,7 +103,6 @@ export function ImageEditor({ src, editedSrc, onSave, designState, open }: Image
   }, [avatarRef.current, canvasRef.current, position, scale]);
 
   const handleZoom = (e: any) => {
-    console.log("scale", e);
     setScale(e / 100);
   };
 
@@ -126,7 +128,9 @@ export function ImageEditor({ src, editedSrc, onSave, designState, open }: Image
               onImageReady={updatePreview}
               ref={avatarRef}
             />
-            <Slider value={scale * 100} min={20} max={200} onChange={handleZoom} className={styles.slider} />
+            <div className={styles.slider}>
+              <Slider value={scale * 100} min={20} max={200} onChange={handleZoom} className={styles.slider} />
+            </div>
           </div>
           <div className={styles.preview}>
             <canvas ref={canvasRef} height={250} width={250} />

@@ -2,11 +2,17 @@
 .editUser {
   max-width: 600px !important;
   margin: 16px auto;
+  height: 600px;
+  overflow: auto;
 }
 
 .editUser > .container {
   display: flex;
   flex-direction: row;
+} 
+
+.editUser > .actions {
+  margin-top: 24px;
 } 
 
 .editUser .avatar {
@@ -27,6 +33,14 @@
   opacity: .4;
 }
 
+.editUser .actions {
+  margin-bottom: 24px;
+}
+
 .editUser .form {
   flex-grow: 1;
+}
+
+.editUser .bio .quill {
+  height: 400px;
 }

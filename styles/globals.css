@@ -44,7 +44,7 @@ body {
   bottom: var(--footer-height);
   overflow: auto;
   padding: 32px;
-  background-color: bisque;
+  background-color: rgb(243, 243, 243);
 }
 
 #__next footer {
