@@ -1,5 +1,6 @@
 
 @import url(https://fonts.googleapis.com/css?family=Hanken+Grotesk);
+@import url(https://fonts.googleapis.com/css?family=Parisienne);
 @import url(semantic-ui-css/semantic.min.css);
 
 :root {
@@ -56,4 +57,12 @@ body {
   padding: 16px;
   background-color: rgba(0,0,0,.05);
   color: #777;
+}
+
+.cursive {
+  font-family: 'Parisienne';
+}
+
+.center {
+  text-align: center;
 }

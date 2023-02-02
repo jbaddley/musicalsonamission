@@ -113,6 +113,7 @@ export default function BasicInformation({ user, onSaved, isLoading }: EditUserP
 
   return (
     <Form className={classNames(styles.editUser, { isLoading })} onSubmit={handleSave} disabled={isSaving}>
+      <h1 className='cursive center'>Basic Information</h1>
       <Container className={styles.actions} textAlign='right'>
         <Button disabled={isLoading || isSaving} type='submit' loading={isSaving} primary>
           Save

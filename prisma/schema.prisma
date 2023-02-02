@@ -399,16 +399,17 @@ model Post {
 }
 
 model Profile {
-  id                Int     @id @default(autoincrement())
+  id                Int      @id @default(autoincrement())
   bio               String?
   avatarBase64      String?
   avatarUrl         String?
   avatarOriginalUrl String?
   avatarDesignState Json?
-  avatarScale       Int     @default(1)
-  avatarBorder      Int     @default(50)
-  user              User    @relation(fields: [userId], references: [id])
-  userId            Int     @unique
+  avatarScale       Int      @default(1)
+  avatarBorder      Int      @default(50)
+  user              User     @relation(fields: [userId], references: [id])
+  userId            Int      @unique
+  skills            String[]
 }
 
 model AuthAttempt {

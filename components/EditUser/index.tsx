@@ -21,14 +21,14 @@ export default function EditUser(props: EditUserProps) {
       ),
     },
     {
-      menuItem: "Bio",
+      menuItem: "Your Story",
       render: () => (
         <Tab.Pane>
           <Bio {...props} />
         </Tab.Pane>
       ),
     },
-    { menuItem: "Tab 3", render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
+    { menuItem: "Skills", render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
   ];
   return <Tab panes={panes} />;
 }
